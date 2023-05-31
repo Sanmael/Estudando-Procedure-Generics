@@ -1,0 +1,41 @@
+﻿@model IEnumerable<FrontEnd2.Models.PersonViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="CreateNewPerson">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>          
+            <th>
+                @Html.DisplayNameFor(model => model.PersonName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaxNumber)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>           
+            <td>
+                @Html.DisplayFor(modelItem => item.PersonName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaxNumber)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "EditPersonView", new { id = item.PersonId}) |
+                @Html.ActionLink("Details", "Details", new { id = item.PersonId }) |
+                @Html.ActionLink("Delete", "DeletePersonView", new { id = item.PersonId })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
