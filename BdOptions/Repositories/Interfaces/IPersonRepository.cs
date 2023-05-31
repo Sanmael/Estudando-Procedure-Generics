@@ -18,6 +18,7 @@ namespace BdOptions.Repositories.Interfaces
         public Person GetPersonByTaxNumber(string taxNumber);
 
         public List<Person> GetPersonList();
+        public List<Person> GetPersonListByName(string name);
 
     }
 }

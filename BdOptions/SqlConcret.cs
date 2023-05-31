@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BdOptions
 {
-    public class SqlConcret<T> : IRepository<T>, IGetRepository<T> where T : class
+    public class SqlConcret : IRepository, IGetRepository
     {
         private readonly DbContext _appDbContext;
 
@@ -19,34 +19,38 @@ namespace BdOptions
         {
             _appDbContext = appDbContext;
         }
-        public void Delete(T entity)
-        {
-            _appDbContext.Set<T>().Remove(entity);
-            _appDbContext.SaveChanges();
-        }
-        public T Get(Expression<Func<T, bool>> predicate)
-        {
-            return _appDbContext.Set<T>().AsNoTracking().Where(predicate).FirstOrDefault();
-        }
-        public void Insert(T entity)
+        public void Insert<T>(T entity) where T : class
         {
             _appDbContext.Set<T>().Add(entity);
             _appDbContext.SaveChanges();
         }
-        public IEnumerable<T> GetAll()
+
+        public void Delete<T>(long id) where T : class
         {
-            return _appDbContext.Set<T>().AsNoTracking().Select(x => x).ToList();
+            T entity = _appDbContext.Set<T>().Find(id);
+            _appDbContext.Set<T>().Remove(entity);
+            _appDbContext.SaveChanges();
         }
 
-        public void Edit(T entity)
+        public void Edit<T>(T entity) where T : class
         {
             _appDbContext.Set<T>().Update(entity);
             _appDbContext.SaveChanges();
         }
 
-        public T GetEntity(long id)
+        public T GetEntityById<T>(long id) where T : class
         {
             return _appDbContext.Set<T>().Find(id);
+        }
+
+        public T Get<T>(Expression<Func<T, bool>> predicate) where T : class
+        {
+            return _appDbContext.Set<T>().AsNoTracking().Where(predicate).FirstOrDefault();
+        }
+
+        public IEnumerable<T> GetAll<T>(Dictionary<string, object> keyValuePairs = null, string procedureName = null) where T : class
+        {
+            return _appDbContext.Set<T>().AsNoTracking().Select(x => x).ToList();
         }
     }
 }

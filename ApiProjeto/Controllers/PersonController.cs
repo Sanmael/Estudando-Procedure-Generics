@@ -39,7 +39,7 @@ namespace ApiProjeto.Controllers
         public void EditPerson(PersonModel personModel)
         {
             try
-            {
+            {                
                 _personService.EditPerson(personModel);
             }
             catch (Exception ex)

@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IRepository<T>
+    public interface IRepository
     {
-        public void Insert(T entity);
-        public void Delete(T entity);
-        public void Edit(T entity);
+        public void Insert<T>(T entity) where T : class;
+        public void Delete<T>(long id) where T : class;
+        public void Edit<T>(T entity) where T : class;
     }
 }

@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IGetRepository<T>
+    public interface IGetRepository
     {
-        public T GetEntity(long id);
-        public T Get(Expression<Func<T, bool>> Predicate);
-        public IEnumerable<T> GetAll();
+        public T GetEntityById<T>(long id) where T : class;
+        public T Get<T>(Expression<Func<T, bool>> Predicate) where T : class;
+        public IEnumerable<T> GetAll<T>(Dictionary<string, object> keyValuePairs = null, string procedureName = null) where T : class;
     }
 }

@@ -2,6 +2,7 @@
 using BdOptions.Repositories;
 using BdOptions.Repositories.Interfaces;
 using Domain.Entities;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,22 +12,21 @@ namespace BdOptions.UOW
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly AppDbContext _appDbContext;
+        //private readonly AppDbContext _appDbContext;
+       
+        private readonly ProcedureConcret _procedureConcret;
 
-        private readonly IPersonRepository _personRepository;
-
-        public UnitOfWork(AppDbContext appDbContext)
+        public UnitOfWork(/*AppDbContext appDbContext, */IConfiguration configuration)
         {
-            _appDbContext = appDbContext;
+            //_appDbContext = appDbContext;
+            _procedureConcret = new ProcedureConcret(configuration);
         }
 
-        //ProcedureConcret<Person> procedureConcret = new ProcedureConcret<Person>();
-        
         public IPersonRepository PersonRepository
         {
             get
             {
-                return _personRepository ?? new PersonRepository(new SqlConcret<Person>(_appDbContext), new SqlConcret<Person>(_appDbContext));
+                return new PersonRepository(_procedureConcret, _procedureConcret);
             }
         }
     }
