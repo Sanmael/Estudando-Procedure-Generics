@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace FrontEnd2.Models
 {
     public class PersonViewModel
-    {
+    {        
         [JsonPropertyName("personId")]
         public long PersonId { get; set; }
 
@@ -16,5 +16,6 @@ namespace FrontEnd2.Models
 
         [JsonPropertyName("taxNumber")]
         public string TaxNumber { get; set; }
+
     }
 }

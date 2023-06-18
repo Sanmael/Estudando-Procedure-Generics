@@ -1,5 +1,6 @@
 ﻿using FrontEnd2.Models;
 using FrontEnd2.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,38 +12,81 @@ using System.Threading.Tasks;
 namespace FrontEnd2.Controllers
 {
     public class PersonController : Controller
-    {
-        public async Task<IActionResult> Index()
+    {       
+        public IActionResult Index()
         {
+            return View();
+        }
+        public async Task<IActionResult> CarregarTeste()
+        {
+            List<PersonViewModel> personViewModel = new List<PersonViewModel>();
+
             try
             {
+                if (Request.Cookies.TryGetValue("PersonWallet", out string results))
+                {
+                    ApiResponse apiResponse = JsonSerializer.Deserialize<ApiResponse>(results);
+
+                    personViewModel = Newtonsoft.Json.JsonConvert.DeserializeObject<List<PersonViewModel>>(apiResponse.Data.ToString());
+
+                    return Json(new { data = personViewModel });
+                }
+
                 var url = "https://localhost:44339/Person/GetPersonList";
 
                 string result = await HttpService.GetAsync(url);
 
-                List<PersonViewModel> personViewModelList = JsonSerializer.Deserialize<List<PersonViewModel>>(result);
+                ApiResponse apiResponses = JsonSerializer.Deserialize<ApiResponse>(result);
 
-                return View(personViewModelList);
+
+                if (apiResponses.Sucess)
+                {
+                    personViewModel = Newtonsoft.Json.JsonConvert.DeserializeObject<List<PersonViewModel>>(apiResponses.Data.ToString());
+
+                    CookieOptions cookieOptions = new CookieOptions
+                    {
+                        Expires = DateTime.Now.AddMinutes(2)
+                    };
+
+                    Response.Cookies.Append("PersonWallet", result, cookieOptions);
+
+                    return Json(new { data = personViewModel });
+                }
+
+                return Json(new { data = personViewModel });
             }
             catch (Exception ex)
             {
                 return NotFound(ex);
             }
+        }
+
+        public IActionResult ResetCache()
+        {
+            if (Request.Cookies.TryGetValue("PersonWallet", out string results))
+            {
+                Response.Cookies.Delete("PersonWallet");
+
+                return Json(new { success = true });
+            }
+
+            return Json(new { success = false });
 
         }
         public IActionResult CreateNewPerson()
         {
             return View();
         }
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddNewPerson(PersonViewModel personViewModel)
         {
             try
             {
                 var url = "https://localhost:44339/Person/AddPerson";
 
-                string result = await HttpService.PostAsync(url,personViewModel);
+                string result = await HttpService.PostAsync(url, personViewModel);
 
-                return RedirectToAction("Index");
+                return Json(new { success = result });
             }
             catch (Exception ex)
             {
@@ -53,39 +97,95 @@ namespace FrontEnd2.Controllers
         {
             var url = "https://localhost:44339/Person/GetPersonById";
 
-            string result = await HttpService.GetAsync(url, id);
+            try
+            {
+                string result = await HttpService.GetAsync(url, id);
 
-            PersonViewModel personViewModel = JsonSerializer.Deserialize<PersonViewModel>(result);
+                ApiResponse apiResponses = JsonSerializer.Deserialize<ApiResponse>(result);
 
-            return View(personViewModel);
+                if (apiResponses.Sucess)
+                {
+                    PersonViewModel personViewModel = Newtonsoft.Json.JsonConvert.DeserializeObject<PersonViewModel>(apiResponses.Data.ToString());
+                    return View(personViewModel);
+                }
+                else
+                    throw new Exception(apiResponses.Data.ToString());
+            }
+            catch (Exception ex)
+            {
+                return Json(new { message = ex.Message });
+            }
         }
-
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPerson(PersonViewModel personViewModel)
         {
-            var url = "https://localhost:44339/Person/EditPerson";
+            try
+            {
+                var url = "https://localhost:44339/Person/EditPerson";
 
-            string result = await HttpService.PostAsync(url, personViewModel);
+                string result = await HttpService.PostAsync(url, personViewModel);
 
-            return RedirectToAction("Index");
+                ApiResponse apiResponses = JsonSerializer.Deserialize<ApiResponse>(result);
+
+                return Json(new { success = apiResponses.Sucess });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = ex.Message });
+            }
+
         }
-        public async Task<IActionResult> DeletePersonView(long id)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PersonDetails(long id)
         {
-            var url = "https://localhost:44339/Person/GetPersonById";
+            try
+            {
+                var url = "https://localhost:44339/Person/GetPersonById";
 
-            string result = await HttpService.GetAsync(url, id);
+                string result = await HttpService.GetAsync(url, id);
 
-            PersonViewModel personViewModel = JsonSerializer.Deserialize<PersonViewModel>(result);
+                ApiResponse apiResponses = JsonSerializer.Deserialize<ApiResponse>(result);
 
-            return View(personViewModel);
+                PersonViewModel personViewModel = null;
+
+                if (apiResponses.Sucess)
+                {
+                    personViewModel = Newtonsoft.Json.JsonConvert.DeserializeObject<PersonViewModel>(apiResponses.Data.ToString());                    
+                }                    
+
+                return Json(new { success = true, data = personViewModel });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = ex.Message });
+            }
+
         }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePerson(long id)
         {
-            var url = "https://localhost:44339/Person/DeletePerson";
+            try
+            {
+                var url = "https://localhost:44339/Person/DeletePerson";
 
-            string result = await HttpService.GetAsync(url, id);
+                string result = await HttpService.GetAsync(url, id);
 
-            return RedirectToAction("Index");
+                ApiResponse apiResponses = JsonSerializer.Deserialize<ApiResponse>(result);
+
+                if (apiResponses.Sucess)
+                    return Json(new { success = apiResponses.Sucess });
+
+                else
+                    throw new Exception(apiResponses.Data.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { message = ex.Message });
+            }
+
         }
 
     }

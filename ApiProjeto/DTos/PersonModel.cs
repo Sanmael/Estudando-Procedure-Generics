@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace ApiProjeto.DTos
 {
-    public class PersonModel
+    public class PersonModel 
     {
         [JsonPropertyName("personId")]
         public long PersonId { get; set; }
         [JsonPropertyName("personName")]
         public string PersonName { get; set; }
         [JsonPropertyName("taxNumber")]
-        public string TaxNumber { get; set; }
-
+        public string TaxNumber { get; set; }        
     }
 }

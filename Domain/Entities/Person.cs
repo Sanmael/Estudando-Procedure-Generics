@@ -8,11 +8,14 @@ using System.Threading.Tasks;
 namespace Domain.Entities
 {
     public class Person
-    {        
+    {
         public long PersonId { get; set; }
         [Required]
+        [Display(Name = "IsUpdated = True")]
         public string PersonName { get; set; }
         [Required]
+        [Display(Name = "IsUpdated = False")]
+
         public string TaxNumber { get; set; }
         public Person()
         {

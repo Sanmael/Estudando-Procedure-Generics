@@ -3,6 +3,7 @@ using BdOptions.Repositories;
 using BdOptions.Repositories.Interfaces;
 using Domain.Entities;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Protocols;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,16 +13,22 @@ namespace BdOptions.UOW
 {
     public class UnitOfWork : IUnitOfWork
     {
-        //private readonly AppDbContext _appDbContext;
-       
+
         private readonly ProcedureConcret _procedureConcret;
 
-        public UnitOfWork(/*AppDbContext appDbContext, */IConfiguration configuration)
+        public UnitOfWork()
         {
-            //_appDbContext = appDbContext;
-            _procedureConcret = new ProcedureConcret(configuration);
+            _procedureConcret = new ProcedureConcret(GetConfiguration().GetConnectionString("DefaultConnection"));
         }
+        private IConfigurationRoot GetConfiguration()
+        {
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+             .SetBasePath(AppContext.BaseDirectory)
+             .AddJsonFile("appsettings.json")
+             .Build();
 
+            return configuration;
+        }
         public IPersonRepository PersonRepository
         {
             get

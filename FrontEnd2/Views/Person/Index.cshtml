@@ -1,41 +1,125 @@
-﻿@model IEnumerable<FrontEnd2.Models.PersonViewModel>
+﻿
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
 
 @{
     ViewData["Title"] = "Index";
+    var requestToken = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+
 }
 
 <h1>Index</h1>
 
 <p>
-    <a asp-action="CreateNewPerson">Create New</a>
+    <button type="button" class="btn btn-danger" data-target="#createModal" data-toggle="modal">Criar Pessoa</button>
+    <button type="button" class="btn btn-danger" onclick="PersonModule.Carregar()">Carregar</button>
+    <button type="button" class="btn btn-danger" onclick="PersonModule.Esconder()">Esconder</button>
+    <button type="button" class="btn btn-danger" onclick="PersonModule.ResetCache()">Apagar Cookies</button>
+
+    <input id="RequestVerificationToken" type="hidden" value="@requestToken" />
 </p>
 <table class="table">
     <thead>
-        <tr>          
-            <th>
-                @Html.DisplayNameFor(model => model.PersonName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TaxNumber)
-            </th>
-            <th></th>
-        </tr>
+
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>           
-            <td>
-                @Html.DisplayFor(modelItem => item.PersonName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TaxNumber)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "EditPersonView", new { id = item.PersonId}) |
-                @Html.ActionLink("Details", "Details", new { id = item.PersonId }) |
-                @Html.ActionLink("Delete", "DeletePersonView", new { id = item.PersonId })
-            </td>
-        </tr>
-}
-    </tbody>
+
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr class="text-center">
+                                <th>Name</th>
+                                <th>Tax Number</th>
+                                <th>Açoes</th>
+
+                            </tr>
+                        </thead>
+                        <tbody id="personTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
 </table>
+
+<script src="~/js/jquery-3.7.0.min.js"></script>
+<script src="~/js/Person.js"></script>
+
+<div class="modal fade" id="DetailsModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Detalhes da Pessoa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="personNameDetail">
+                    Nome :
+                </div>
+
+                <div id="personTaxNumberDetail">
+                    Cpf :
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="messageDelete-message">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-modal">No</button>
+                <button type="button" id="inputid" onclick="PersonModule.Deletar2(this.value)" value="" class="btn btn-danger">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Criar nova Pessoa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <label>Nome da Pessoa</label>
+                    <input type="text" id="personNameCreate" />
+                </div>
+                <div>
+                    <label>Cpf da Pessoa</label>
+                    <input type="text" id="personTaxNumberCreate" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-modal">No</button>
+                <button type="button" id="createId" onclick="PersonModule.Create()" class="btn btn-danger">Criar</button>
+            </div>
+        </div>
+    </div>
+</div>
+

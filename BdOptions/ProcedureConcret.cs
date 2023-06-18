@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -15,9 +16,9 @@ namespace BdOptions
     public class ProcedureConcret : IRepository, IGetRepository
     {
         private readonly string _connectionString;
-        public ProcedureConcret(IConfiguration Configuration)
+        public ProcedureConcret(string configuration)
         {
-            _connectionString = Configuration.GetConnectionString("DefaultConnection");
+            _connectionString = configuration;/*.GetConnectionString("DefaultConnection");*/
         }
 
         public void Insert<T>(T entity) where T : class
@@ -69,6 +70,8 @@ namespace BdOptions
         {
             PropertyInfo[] propertyInfos = entity.GetType().GetProperties();
 
+            Type type = entity.GetType();
+
             using (var connection = new SqlConnection(_connectionString))
             {
                 using (var command = new SqlCommand($"Edit{entity.GetType().Name}", connection))
@@ -77,6 +80,13 @@ namespace BdOptions
 
                     foreach (PropertyInfo propertyInfo in propertyInfos)
                     {
+                        var displayAttribute = propertyInfo.GetCustomAttribute<DisplayAttribute>();
+
+                        string displayName = displayAttribute?.Name;
+
+                        if (displayName == "IsUpdated = False")
+                            continue;
+
                         command.Parameters.AddWithValue($"@{propertyInfo.Name}", propertyInfo.GetValue(entity));
                     }
 

@@ -24,56 +24,89 @@ namespace ApiProjeto.Controllers
         }
 
         [HttpPost]
-        public void AddPerson(PersonModel personModel)
+        public ActionResult AddPerson([FromBody] PersonModel personModel)
         {
             try
             {
-                _personService.AddNewPerson(personModel);
+                bool create = _personService.AddNewPerson(personModel);
+
+                return Ok(create);
             }
             catch (Exception ex)
             {
-
+                return NotFound(ex);
             }
         }
         [HttpPost]
-        public void EditPerson(PersonModel personModel)
+        public ActionResult EditPerson([FromBody] PersonModel personModel)
         {
+            ApiResponse apiResponse = new ApiResponse();
+
             try
-            {                
-                _personService.EditPerson(personModel);
+            {
+                bool edit = _personService.EditPerson(personModel);
+
+                apiResponse = new ApiResponse(edit, personModel);
+
+                return Ok(apiResponse);
             }
             catch (Exception ex)
             {
-
+                return NotFound(ex);
             }
         }
         [HttpGet("{id}")]
-        public void DeletePerson(long id)
+        public ActionResult DeletePerson(long id)
         {
+            ApiResponse apiResponse = null;
+
             try
             {
+
                 PersonModel personModel = _personService.GetPersonById(id);
 
+                if (personModel.PersonId == 0)
+                {
+                    throw new Exception("Usuario não encontrado!");
+                }
+
                 _personService.DeletePerson(personModel);
+
+                apiResponse = new ApiResponse(true, personModel);
+
+                return Ok(apiResponse);
+
             }
             catch (Exception ex)
             {
-
+                apiResponse = new ApiResponse(false, ex.Message);
+                return Ok(apiResponse);
             }
         }
         [HttpGet("{id}")]
         public ActionResult GetPersonById(long id)
         {
+            ApiResponse apiResponse = null;
+
             try
             {
+
                 PersonModel personModel = _personService.GetPersonById(id);
 
-                return Ok(personModel);
+                if (personModel.PersonId == 0)
+                {
+                    throw new Exception("Usuario não encontrado!");
+                }
+
+                apiResponse = new ApiResponse(true, personModel);
+
+                return Ok(apiResponse);
             }
 
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                apiResponse = new ApiResponse(false, ex.Message);
+                return Ok(apiResponse);
             }
         }
         [HttpGet]
@@ -81,9 +114,16 @@ namespace ApiProjeto.Controllers
         {
             try
             {
+                ApiResponse apiResponse = null;
+
                 List<PersonModel> personModel = _personService.GetPersonList();
 
-                return Ok(personModel);
+                if (personModel.Count < 0)
+                    apiResponse = new ApiResponse(false, personModel);
+
+                apiResponse = new ApiResponse(true, personModel);
+
+                return Ok(apiResponse);
             }
 
             catch (Exception ex)

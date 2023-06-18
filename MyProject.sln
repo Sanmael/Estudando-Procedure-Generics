@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BdOptions", "BdOptions\BdOp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{60F9628C-35E6-4A48-AC10-587FE1B10D8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiProjeto", "ApiProjeto\ApiProjeto.csproj", "{89A21F70-D75C-493A-8279-3772B1DCB593}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiProjeto", "ApiProjeto\ApiProjeto.csproj", "{89A21F70-D75C-493A-8279-3772B1DCB593}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrontEnd2", "FrontEnd2\FrontEnd2.csproj", "{70921582-5F3B-44A0-99C0-9944A53B2060}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrontEnd2", "FrontEnd2\FrontEnd2.csproj", "{70921582-5F3B-44A0-99C0-9944A53B2060}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

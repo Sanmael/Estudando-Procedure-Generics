@@ -1,7 +1,10 @@
 ﻿@model FrontEnd2.Models.PersonViewModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 
 @{
     ViewData["Title"] = "CreateNewPerson";
+    var requestToken = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+
 }
 
 <h1>CreateNewPerson</h1>
@@ -10,24 +13,22 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="AddNewPerson">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="PersonName" class="control-label"></label>
-                <input asp-for="PersonName" class="form-control" />
-                <span asp-validation-for="PersonName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TaxNumber" class="control-label"></label>
-                <input asp-for="TaxNumber" class="form-control" />
-                <span asp-validation-for="TaxNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        <div class="form-group">
+            <label asp-for="PersonName" class="control-label"></label>
+            <input asp-for="PersonName" id="personName" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="TaxNumber" class="control-label"></label>
+            <input asp-for="TaxNumber" id="taxNumber" class="form-control" />
+        </div>
+        <div class="form-group">
+            <input type="submit" id="submitButton" value="Create" class="btn btn-primary" />
+        </div>
+        <input id="RequestVerificationToken" type="hidden" value="@requestToken" />
     </div>
 </div>
+
+<script src="~/js/jquery-3.7.0.min.js"></script>
 
 <div>
     <a asp-action="Index">Back to List</a>
